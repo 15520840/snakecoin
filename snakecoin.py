@@ -49,7 +49,7 @@ def mine():
         # The program will hang here until a new proof of work found
         proof = proof_of_work(last_proof)
         this_nodes_transactions.append(
-                {"from": "network", "to": "miner_address", "amount": 1}
+                {"from": "network", "to": miner_address, "amount": 1}
         )
 
         # Create new data block
@@ -68,13 +68,14 @@ def mine():
         mined_block = Block(
                 new_block_index,
                 new_block_timestamp,
+                new_block_data,
                 last_block_hash
         )
 
         blockchain.append(mined_block)
 
         # Let the client know we mined a block
-        return json.dump(
+        return json.dumps(
                 {
                         "index": new_block_index,
                         "timestamp": str(new_block_timestamp),
@@ -87,7 +88,8 @@ def mine():
 def get_blocks():
         chain_to_send = blockchain
 
-        for block in chain_to_send:
+        for block in range(len(chain_to_send)):
+                block = chain_to_send[i]
                 block_index = str(block.index)
                 block_timestamp = str(block.timestamp)
                 block_data = str(block.data)
@@ -152,29 +154,6 @@ def transaction():
 
 
 
-def next_block(last_block):
-        this_index = last_block.index + 1
-        this_timestamp = date.datetime.now()
-        this_data = "Hey, I'm block" + str(this_index)
-        this_hash = last_block.hash
-
-        return Block(this_index, this_timestamp, this_data, this_hash)
-
-# Create blockchain and genesis block
-previous_block = blockchain[0]
-
-# Number of blocks to add after genesis block
-num_of_blocks_to_add = 20
-
-# Add block to the chain
-for i in range(0, num_of_blocks_to_add):
-        block_to_add = next_block(previous_block)
-        blockchain.append(block_to_add)
-        previous_block = block_to_add
-
-        # Broadcast this
-        print("Block #{} has been added to the blockchain".format(block_to_add.index))
-        print("Hash: {}\n".format(block_to_add.hash))
 
 
 node.run()
